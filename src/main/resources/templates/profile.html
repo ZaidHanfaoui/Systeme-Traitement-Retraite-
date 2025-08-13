@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Utilisateur - STR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .user-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #eee;
+        }
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin: 0 auto 1rem;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .info-card {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .info-label {
+            font-weight: bold;
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .info-value {
+            color: #333;
+            font-size: 1.1rem;
+        }
+        .authorities {
+            background: #e3f2fd;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        .authority-tag {
+            display: inline-block;
+            background: #2196f3;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin: 2px;
+        }
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px 5px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="user-header">
+            <div class="user-avatar" th:text="${user.givenName?.substring(0,1)?.toUpperCase() ?: 'U'}">U</div>
+            <h1 th:text="${name ?: 'Utilisateur'}">Nom Utilisateur</h1>
+            <p th:text="${email}">email@example.com</p>
+        </div>
+
+        <div class="info-grid">
+            <div class="info-card">
+                <div class="info-label">Nom d'utilisateur</div>
+                <div class="info-value" th:text="${username}">username</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Email</div>
+                <div class="info-value" th:text="${email}">email@example.com</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">Nom complet</div>
+                <div class="info-value" th:text="${name}">Nom Prénom</div>
+            </div>
+            <div class="info-card">
+                <div class="info-label">ID Utilisateur</div>
+                <div class="info-value" th:text="${user.subject}">user-id</div>
+            </div>
+        </div>
+
+        <div class="authorities">
+            <h3>🔐 Autorisations et Rôles</h3>
+            <div th:each="authority : ${authorities}">
+                <span class="authority-tag" th:text="${authority.authority}">ROLE</span>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 2rem;">
+            <a href="http://localhost:3001" class="btn">🚀 Accéder à l'interface React</a>
+            <a href="/user-info" class="btn">📋 Informations détaillées</a>
+            <a href="/welcome" class="btn">🏠 Accueil</a>
+        </div>
+    </div>
+</body>
+</html>

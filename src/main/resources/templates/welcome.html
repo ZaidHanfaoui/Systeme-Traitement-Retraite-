@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STR - Système de Traitement des Retraites</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            text-align: center;
+            max-width: 600px;
+        }
+        .logo {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+        p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 10px;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        .feature {
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🏛️</div>
+        <h1>Système de Traitement des Retraites</h1>
+        <p>Bienvenue dans votre espace personnel de gestion des dossiers de retraite.</p>
+
+        <div class="features">
+            <div class="feature">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">👤</div>
+                <strong>Interface Utilisateur</strong>
+                <p style="font-size: 0.9rem; margin: 0.5rem 0;">Gérez votre dossier personnel</p>
+            </div>
+            <div class="feature">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">👨‍💼</div>
+                <strong>Interface Admin</strong>
+                <p style="font-size: 0.9rem; margin: 0.5rem 0;">Administration complète</p>
+            </div>
+            <div class="feature">
+                <div style="font-size: 2rem; margin-bottom: 0.5rem;">🤖</div>
+                <strong>Assistant IA</strong>
+                <p style="font-size: 0.9rem; margin: 0.5rem 0;">Chatbot Gemini intégré</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 2rem;">
+            <a href="/oauth2/authorization/keycloak" class="btn">🔐 Se connecter avec Keycloak</a>
+            <a href="http://localhost:3000" class="btn">⚛️ Interface React</a>
+        </div>
+
+        <p style="margin-top: 2rem; font-size: 0.9rem; color: #999;">
+            💡 Backend Spring Boot: Port 8088 | Frontend React: Port 3000
+        </p>
+    </div>
+</body>
+</html>
+
