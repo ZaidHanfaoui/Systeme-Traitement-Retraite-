@@ -1,6 +1,5 @@
 package com.str.Models;
 import com.str.Enum.StatutDossier;
-import com.str.Models.PeriodeCotisation;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,66 +8,73 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+
+
 @Entity
-@Table(name = "dossiers_retraite")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
+@Table(name = "dossiers")
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class DossierRetraite {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    @Column(name = "keycloak_user_id", nullable = false)
-    private String keycloakUserId; // Référence à l'utilisateur Keycloak
+    @Column(unique = true, nullable = false)
+    private String numeroSecuriteSociale;
 
-    @Column(nullable = false)
-    private LocalDate dateDepot;
+    @Embedded
+    private Beneficiaire beneficiaire;  // Données personnelles
 
     @Enumerated(EnumType.STRING)
-    private StatutDossier statut; // BROUILLON, EN_COURS, VALIDE, REJETE
-
-    @Column(name = "salaire_moyen", precision = 10, scale = 2)
-    private BigDecimal salaireMoyen;
+    private StatutDossier statut;
 
     @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PeriodeCotisation> periodesCotisation;
+    private List<Carriere> carrieres;
 
     @OneToMany(mappedBy = "dossier")
     private List<Paiement> paiements;
 
-    public BigDecimal getPensionMensuelle() {
-        if (salaireMoyen == null || periodesCotisation == null || periodesCotisation.isEmpty()) {
-            return BigDecimal.ZERO;
+    @OneToMany(mappedBy = "dossier", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Document> documents;
+
+    @Column(updatable = false)
+    private LocalDate dateCreation = LocalDate.now();
+
+    public void updateFrom(DossierRetraite source) {
+        if (source.getBeneficiaire() != null) {
+            this.beneficiaire = source.getBeneficiaire();
         }
-        // Calcul de la pension mensuelle basée sur le salaire moyen et le nombre d'années de cotisation
-        int anneesCotisees = periodesCotisation.size();
-        BigDecimal tauxDeBase = new BigDecimal("0.75"); // 75% du salaire moyen
-        return salaireMoyen.multiply(tauxDeBase).multiply(new BigDecimal(anneesCotisees)).divide(new BigDecimal(100));
+        if (source.getStatut() != null) {
+            this.statut = source.getStatut();
+        }
+        if (source.getNumeroSecuriteSociale() != null) {
+            this.numeroSecuriteSociale = source.getNumeroSecuriteSociale();
+        }
     }
 
-    public UUID getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getKeycloakUserId() {
-        return keycloakUserId;
+    public String getNumeroSecuriteSociale() {
+        return numeroSecuriteSociale;
     }
 
-    public void setKeycloakUserId(String keycloakUserId) {
-        this.keycloakUserId = keycloakUserId;
+    public void setNumeroSecuriteSociale(String numeroSecuriteSociale) {
+        this.numeroSecuriteSociale = numeroSecuriteSociale;
     }
 
-    public LocalDate getDateDepot() {
-        return dateDepot;
+    public Beneficiaire getBeneficiaire() {
+        return beneficiaire;
     }
 
-    public void setDateDepot(LocalDate dateDepot) {
-        this.dateDepot = dateDepot;
+    public void setBeneficiaire(Beneficiaire beneficiaire) {
+        this.beneficiaire = beneficiaire;
     }
 
     public StatutDossier getStatut() {
@@ -79,20 +85,12 @@ public class DossierRetraite {
         this.statut = statut;
     }
 
-    public BigDecimal getSalaireMoyen() {
-        return salaireMoyen;
+    public List<Carriere> getCarrieres() {
+        return carrieres;
     }
 
-    public void setSalaireMoyen(BigDecimal salaireMoyen) {
-        this.salaireMoyen = salaireMoyen;
-    }
-
-    public List<PeriodeCotisation> getPeriodesCotisation() {
-        return periodesCotisation;
-    }
-
-    public void setPeriodesCotisation(List<PeriodeCotisation> periodesCotisation) {
-        this.periodesCotisation = periodesCotisation;
+    public void setCarrieres(List<Carriere> carrieres) {
+        this.carrieres = carrieres;
     }
 
     public List<Paiement> getPaiements() {
@@ -103,9 +101,37 @@ public class DossierRetraite {
         this.paiements = paiements;
     }
 
-    public void setDateValidation(LocalDate now) {
+    public List<Document> getDocuments() {
+        return documents;
     }
 
-    public void setPensionMensuelle(BigDecimal zero) {
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
+
+    public LocalDate getDateCreation() {
+        return dateCreation;
+    }
+
+    public void setDateCreation(LocalDate dateCreation) {
+        this.dateCreation = dateCreation;
+    }
+
+    // Méthode pour mettre à jour le statut
+    public void updateStatut(StatutDossier nouveauStatut) {
+        this.statut = nouveauStatut;
+    }
+
+    // Méthodes utilitaires
+    public int getNombreCarrieres() {
+        return carrieres != null ? carrieres.size() : 0;
+    }
+
+    public int getNombrePaiements() {
+        return paiements != null ? paiements.size() : 0;
+    }
+
+    public int getNombreDocuments() {
+        return documents != null ? documents.size() : 0;
     }
 }

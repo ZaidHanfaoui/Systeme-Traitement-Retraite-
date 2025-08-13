@@ -1,39 +1,35 @@
-//package com.str.Mappers;
-//
-//import com.str.DTO.DossierDTO;
-//import com.str.Enum.StatutDossier;
-//import com.str.Models.DossierRetraite;
-//import org.mapstruct.Mapper;
-//import org.mapstruct.Mapping;
-//import org.mapstruct.Named;
-//
-//import java.math.BigDecimal;
-//
-//@Mapper(componentModel = "spring")
-//public interface DossierMapper {
-//
-//    @Mapping(target = "id", source = "id")
-//    @Mapping(target = "statut", source = "statut", qualifiedByName = "statutToString")
-//    @Mapping(target = "dateDepot", source = "dateDepot")
-//    @Mapping(target = "userId", source = "keycloakUserId")
-//    @Mapping(target = "pension", source = "pensionMensuelle")
-//    DossierDTO toDTO(DossierRetraite entity);
-//
-//    @Mapping(target = "id", ignore = true) // Ignoré car généré automatiquement
-//    @Mapping(target = "statut", ignore = true) // Géré par le service
-//    @Mapping(target = "dateDepot", ignore = true) // Géré par le service
-//    @Mapping(target = "keycloakUserId", source = "userId")
-//    @Mapping(target = "paiements", ignore = true) // Géré séparément
-//    @Mapping(target = "periodesCotisation", ignore = true) // Géré séparément
-//    DossierRetraite toEntity(DossierDTO dto);
-//
-//    @Named("statutToString")
-//    default String statutToString(StatutDossier statut) {
-//        return statut != null ? statut.name() : null;
-//    }
-//
-//    @Named("calculatePension")
-//    default BigDecimal calculatePension(DossierRetraite entity) {
-//        return entity.getPensionMensuelle();
-//    }
-//}
+package com.str.Mappers;
+
+import com.str.DTO.DossierDTO;
+import com.str.Models.DossierRetraite;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import java.time.LocalDate;
+import java.time.Period;
+
+@Mapper(componentModel = "spring", uses = {CarriereMapper.class, PaiementMapper.class, DocumentMapper.class})
+public interface DossierMapper {
+    @Mapping(target = "id", source = "id")
+    @Mapping(target = "numeroSecuriteSociale", source = "numeroSecuriteSociale")
+    @Mapping(target = "beneficiaire", source = "beneficiaire")
+    @Mapping(target = "statut", source = "statut")
+    @Mapping(target = "carrieres", source = "carrieres")
+    @Mapping(target = "paiements", source = "paiements")
+    @Mapping(target = "documents", source = "documents")
+    @Mapping(target = "dateCreation", source = "dateCreation")
+    @Mapping(target = "pensionMensuelle", ignore = true)
+    @Mapping(target = "age", expression = "java(calculateAge(entity))")
+    DossierDTO toDto(DossierRetraite entity);
+
+    @Mapping(target = "carrieres", ignore = true)
+    @Mapping(target = "paiements", ignore = true)
+    @Mapping(target = "documents", ignore = true)
+    DossierRetraite toEntity(DossierDTO dto);
+
+    default Integer calculateAge(DossierRetraite entity) {
+        if (entity.getBeneficiaire() != null && entity.getBeneficiaire().getDateNaissance() != null) {
+            return Period.between(entity.getBeneficiaire().getDateNaissance(), LocalDate.now()).getYears();
+        }
+        return null;
+    }
+}
