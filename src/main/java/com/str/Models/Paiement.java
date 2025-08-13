@@ -1,47 +1,73 @@
 package com.str.Models;
 
-import com.str.Enum.StatutPaiement;
+import com.str.Enum.TypePaiement;
 import jakarta.persistence.*;
-import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.YearMonth;
-import java.util.UUID;
 
 @Entity
 @Table(name = "paiements")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor
 public class Paiement {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
-
-    @Column(precision = 10, scale = 2, nullable = false)
-    private BigDecimal montant;
-
-    @Column(name = "date_virement", nullable = false)
-    private LocalDate dateVirement;
-
-    @Column(nullable = false)
-    private String iban; // Chiffré en base avec Jasypt ou PostgreSQL pgcrypto
-    @Column(name = "periode") // Add this new field
-    private YearMonth periode;
-
-
-    @Enumerated(EnumType.STRING)
-    private StatutPaiement statut; // EN_ATTENTE, EFFECTUE, ERREUR
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dossier_id")
     private DossierRetraite dossier;
 
-    public UUID getId() {
+    @Column(nullable = false)
+    private BigDecimal montant;
+
+    @Column(name = "date_versement", nullable = false)
+    private LocalDate dateVersement;
+
+    @Column(name = "date_paiement")
+    private LocalDate datePaiement;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, name = "type_paiement")
+    private TypePaiement typePaiement;
+
+    private String reference;
+
+    private String statut = "EN_ATTENTE";
+
+    @Column(name = "date_execution")
+    private LocalDate dateExecution;
+
+    // Constructeurs
+    public Paiement() {}
+
+    public Paiement(Long id, DossierRetraite dossier, BigDecimal montant, LocalDate dateVersement,
+                   LocalDate datePaiement, TypePaiement typePaiement, String reference,
+                   String statut, LocalDate dateExecution) {
+        this.id = id;
+        this.dossier = dossier;
+        this.montant = montant;
+        this.dateVersement = dateVersement;
+        this.datePaiement = datePaiement;
+        this.typePaiement = typePaiement;
+        this.reference = reference;
+        this.statut = statut;
+        this.dateExecution = dateExecution;
+    }
+
+    // Getters et Setters
+    public Long getId() {
         return id;
     }
 
-    public void setId(UUID id) {
+    public void setId(Long id) {
         this.id = id;
+    }
+
+    public DossierRetraite getDossier() {
+        return dossier;
+    }
+
+    public void setDossier(DossierRetraite dossier) {
+        this.dossier = dossier;
     }
 
     public BigDecimal getMontant() {
@@ -52,43 +78,65 @@ public class Paiement {
         this.montant = montant;
     }
 
-    public LocalDate getDateVirement() {
-        return dateVirement;
+    public LocalDate getDateVersement() {
+        return dateVersement;
     }
 
-    public void setDateVirement(LocalDate dateVirement) {
-        this.dateVirement = dateVirement;
+    public void setDateVersement(LocalDate dateVersement) {
+        this.dateVersement = dateVersement;
     }
 
-    public String getIban() {
-        return iban;
+    public LocalDate getDatePaiement() {
+        return datePaiement;
     }
 
-    public void setIban(String iban) {
-        this.iban = iban;
+    public void setDatePaiement(LocalDate datePaiement) {
+        this.datePaiement = datePaiement;
     }
 
-    public YearMonth getPeriode() {
-        return periode;
+    public TypePaiement getTypePaiement() {
+        return typePaiement;
     }
 
-    public void setPeriode(YearMonth periode) {
-        this.periode = periode;
+    public void setTypePaiement(TypePaiement typePaiement) {
+        this.typePaiement = typePaiement;
     }
 
-    public StatutPaiement getStatut() {
+    // Méthode pour compatibilité avec le frontend qui utilise 'type'
+    public TypePaiement getType() {
+        return typePaiement;
+    }
+
+    public void setType(TypePaiement type) {
+        this.typePaiement = type;
+    }
+
+    public String getReference() {
+        return reference;
+    }
+
+    public void setReference(String reference) {
+        this.reference = reference;
+    }
+
+    public String getStatut() {
         return statut;
     }
 
-    public void setStatut(StatutPaiement statut) {
+    public void setStatut(String statut) {
         this.statut = statut;
     }
 
-    public DossierRetraite getDossier() {
-        return dossier;
+    public LocalDate getDateExecution() {
+        return dateExecution;
     }
 
-    public void setDossier(DossierRetraite dossier) {
-        this.dossier = dossier;
+    public void setDateExecution(LocalDate dateExecution) {
+        this.dateExecution = dateExecution;
+    }
+
+    // Méthode utilitaire pour obtenir l'ID du dossier
+    public Long getDossierId() {
+        return dossier != null ? dossier.getId() : null;
     }
 }
